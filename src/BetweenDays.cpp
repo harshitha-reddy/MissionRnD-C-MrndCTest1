@@ -28,7 +28,62 @@ struct node{
 	struct node *next;
 };
 
+struct Date
+{
+	int day, mnth, year;
+};
+int countLeapYears(struct Date *leap);
+int findDifference(struct Date *date1,struct Date *date2);
 
 int between_days(struct node *date1head, struct node *date2head){
-	return -1;
+	if (date1head == NULL || date2head == NULL)
+		return -1;
+	int result;
+	Date *date1 = (struct Date *)malloc(sizeof(struct Date));
+	Date *date2 = (struct Date *)malloc(sizeof(struct Date));
+	date1->day = (date1head->data) * 10 + (date1head->next->data);
+	struct node *date1Temp = date1head->next->next;
+	date1->mnth = (date1Temp->data) * 10 + (date1Temp->next->data);
+	date1Temp = date1Temp->next->next;
+	date1->year = (date1Temp->data) * 1000 + (date1Temp->next->data) * 100 + (date1Temp->next->next->data) * 10 + (date1Temp->next->next->next->data);
+
+	date2->day = (date2head->data) * 10 + (date2head->next->data);
+	struct node *date2Temp = date2head->next->next;
+	date2->mnth = (date2Temp->data) * 10 + (date2Temp->next->data);
+	date2Temp = date2Temp->next->next;
+	date2->year = (date2Temp->data) * 1000 + (date2Temp->next->data) * 100 + (date2Temp->next->next->data) * 10 + (date2Temp->next->next->next->data);
+
+	if (date1->mnth == date2->mnth || date1->day == date2->day || date1->year == date2->year)
+		return 0;
+
+	result = findDifference(date1, date2);
+
+	return result;
+}
+const int days_Months[12] = { 31, 28, 31, 30, 31, 30,
+31, 31, 30, 31, 30, 31 };
+
+int countLeapYears(struct Date *leap)
+{
+	int years = leap->year;
+	if (leap->mnth <= 2)
+		years--;
+	return years / 4 - years / 100 + years / 400;
+}
+
+int findDifference(struct Date *date1, struct Date *date2)
+{
+	long int days_1 = date1->year * 365 + date1->day;
+
+	for (int i = 0; i<date1->mnth - 1; i++)
+		days_1 += days_Months[i];
+	days_1 += countLeapYears(date1);
+
+
+	long int days_2 = date2->year * 365 + date2->day;
+	for (int i = 0; i<date2->mnth - 1; i++)
+		days_2 += days_Months[i];
+	days_2 += countLeapYears(date2);
+
+	return (days_2 - days_1);
 }
