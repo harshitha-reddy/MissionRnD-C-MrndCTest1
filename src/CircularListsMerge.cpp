@@ -32,7 +32,112 @@ struct node{
 	int data;
 	struct node *next;
 };
+void addNodeToList(struct node **finalLinkedList, struct node *nodeToBeAdded);
+void CreateCircularLinkedList(struct node **finalLinkedList);
+int addRemainingNodes(struct node **finalLinkedList, struct node *head1, struct node *head2);
+
+
+void addNodeToList(struct node **finalLinkedList, struct node *nodeToBeAdded)
+{
+	struct node *recurser;
+	if (*finalLinkedList == NULL)
+	{
+		*finalLinkedList = nodeToBeAdded;
+	}
+	else
+	{
+		recurser = *finalLinkedList;
+		while (recurser->next != NULL)
+			recurser = recurser->next;
+		recurser->next = nodeToBeAdded;
+	}
+}
 int merge_circularlists(struct node **head1, struct node **head2){
 	//Returns Length of merged Sorted circular SLL and also points *head1 to final SLL .
-	return -1;
+	if (head1 == NULL || head2 == NULL)
+		return -1;
+	struct node *finallinkedlist = NULL;
+	struct node *head1_temp, *head2_temp, *recurser;
+	int length = 0;
+	while (((((*head1)->data) < ((*head1)->next->data))) || ((((*head2)->data) < ((*head2)->next->data)))) 
+	{
+		if ((*head1)->data < ((*head2)->data))
+		{
+			printf("adding %d to the final list\n", (*head1)->data);
+			head1_temp = (*head1)->next;
+			(*head1)->next = NULL;
+			addNodeToList(&finallinkedlist, *head1);
+			*head1 = head1_temp; 
+
+
+		}
+		else
+		{
+			printf("adding %d to the final list\n", (*head2)->data);
+			head2_temp = (*head2)->next;
+			(*head2)->next = NULL;
+			addNodeToList(&finallinkedlist, *head2);
+			*head2 = head2_temp;
+		}
+		length++;
+	}
+	if (head1 != NULL && head2 != NULL)
+		length += addRemainingNodes(&finallinkedlist, *head1, *head2);
+	CreateCircularLinkedList(&finallinkedlist);
+	*head1 = finallinkedlist;
+	//printf("%d is the length\n", length);
+
+	return length;
+}
+void CreateCircularLinkedList(struct node **finalLinkedList)
+{
+	struct node *recurser;
+	if (*finalLinkedList == NULL)
+	{
+		return;
+	}
+	else
+	{
+		recurser = *finalLinkedList;
+		while (recurser->next != NULL)
+			recurser = recurser->next;
+		recurser->next = *finalLinkedList;
+	}
+
+}
+int addRemainingNodes(struct node **finalLinkedList, struct node *head1, struct node *head2)
+{
+	int length = 0;
+	if (head1 != NULL&&head2 == NULL)
+	{
+		head1->next = NULL;
+		addNodeToList(finalLinkedList, head1);
+		length++;
+	}
+	else if (head2 != NULL&&head1 == NULL)
+	{
+		head2->next = NULL;
+		addNodeToList(finalLinkedList, head2);
+		length++;
+	}
+	else
+	{
+		if (head1->data<head2->data){
+			head1->next = NULL;
+			addNodeToList(finalLinkedList, head1);
+			head2->next = NULL;
+			addNodeToList(finalLinkedList, head2);
+
+		}
+		else
+		{
+			head2->next = NULL;
+			addNodeToList(finalLinkedList, head2);
+			head1->next = NULL;
+			addNodeToList(finalLinkedList, head1);
+
+		}
+		length += 2;
+	}
+	return length;
 }
