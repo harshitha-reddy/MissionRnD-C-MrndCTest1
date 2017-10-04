@@ -53,7 +53,7 @@ int between_days(struct node *date1head, struct node *date2head){
 	date2Temp = date2Temp->next->next;
 	date2->year = (date2Temp->data) * 1000 + (date2Temp->next->data) * 100 + (date2Temp->next->next->data) * 10 + (date2Temp->next->next->next->data);
 
-	if (date1->mnth == date2->mnth || date1->day == date2->day || date1->year == date2->year)
+	if (date1->mnth == date2->mnth && date1->day == date2->day && date1->year == date2->year)
 		return 0;
 
 	result = findDifference(date1, date2);
